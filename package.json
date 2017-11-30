@@ -1,0 +1,30 @@
+{
+  "name": "spotify-to-google-music-playlist-converter",
+  "version": "1.0.0",
+  "description": "A Node.js tool for converting Spotify playlists to Google Music",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/scottenriquez/spotify-to-google-music-playlist-converter.git"
+  },
+  "keywords": [
+    "Spotify",
+    "Google",
+    "Music",
+    "playlist",
+    "converter"
+  ],
+  "author": "Scottie Enriquez",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/scottenriquez/spotify-to-google-music-playlist-converter/issues"
+  },
+  "homepage": "https://github.com/scottenriquez/spotify-to-google-music-playlist-converter#readme",
+  "dependencies": {
+    "playmusic": "^2.3.0",
+    "spotify-web-api-node": "^2.5.0"
+  }
+}
