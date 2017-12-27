@@ -39,9 +39,6 @@ spotifyApi.clientCredentialsGrant()
                                         console.log('Something went wrong when fetching Google Play playlists', googlePlayGetPlaylistError);
                                     }
                                     else {
-                                        console.log(googlePlayGetPlaylistData.data.items
-                                            .filter((item, index) => item.name === newPlaylistName)
-                                            .shift());
                                         var googlePlayPlaylistId = googlePlayGetPlaylistData.data.items
                                             .filter((item, index) => item.name === newPlaylistName)
                                             .shift().id;
@@ -56,12 +53,12 @@ spotifyApi.clientCredentialsGrant()
                                                         .filter((item, index) => item.type === '1')
                                                         .sort((first, second) => first.score > second.score)
                                                         .shift();
-                                                    playMusicApi.addTrackToPlayList(googlePlaySong.track.nid, googlePlayPlaylistId, function(googlePlayAddTrackError, googlePlayAddTrackData) {
+                                                    playMusicApi.addTrackToPlayList(googlePlaySong.track.storeId, googlePlayPlaylistId, function(googlePlayAddTrackError, googlePlayAddTrackData) {
                                                         if (googlePlayAddTrackError) {
                                                             console.log('Something went wrong when adding a track to the playlist', googlePlayAddTrackError);
                                                         }
                                                         else {
-                                                            console.log(googlePlayAddTrackData);
+                                                            console.log('Added ' + googlePlaySong.track.title + ' by ' + googlePlaySong.track.artist);
                                                         }
                                                     });
                                                 }
