@@ -19,21 +19,36 @@ spotifyApi.clientCredentialsGrant()
         spotifyApi.setAccessToken(clientCredentialData.body['access_token']);
         spotifyApi.getPlaylist(spotifyTargetUsername, spotifyTargetPlaylistId)
             .then(function(playlistData) {
+                var spotifyPlaylistTracks = playlistData.body.tracks.items;
                 var playMusicApi = new PlayMusic();
                 playMusicApi.init({
                     email: googlePlayEmailAddress,
                     password: googlePlayPassword
-                }, function(googlePlayConnectionError){
-                    if (googlePlayConnectionError){
+                }, function(googlePlayConnectionError) {
+                    if (googlePlayConnectionError) {
                         console.log('Something went wrong when connecting to Google Play', googlePlayConnectionError)
                     }
                     else {
-                        playMusicApi.addPlayList(newPlaylistName, function(googlePlayPlaylistCreationError){
+                        playMusicApi.addPlayList(newPlaylistName, function(googlePlayPlaylistCreationError) {
                             if (googlePlayConnectionError){
                                 console.log('Something went wrong when creating a new Google Play playlist', googlePlayPlaylistCreationError)
                             }
                             else {
-                                console.log('Playlist created');
+                                spotifyPlaylistTracks.forEach(function(song) {
+                                    var searchText = song.track.name + ' ' + song.track.artists[0].name;
+                                    playMusicApi.search(searchText, 25, function(googlePlaySearchError, googlePlaySearchData) {
+                                        if (googlePlaySearchError) {
+                                            console.log('Something went wrong when searching for a song', googlePlaySearchError);
+                                        }
+                                        else {
+                                            var result = googlePlaySearchData.entries
+                                                .filter((item, index) => item.type === '1')
+                                                .sort((first, second) => first.score > second.score)
+                                                .shift();
+                                            console.log(result);
+                                        }
+                                    });
+                                });
                             }
                         });
                     }
