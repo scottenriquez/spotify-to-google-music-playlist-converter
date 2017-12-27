@@ -29,25 +29,45 @@ spotifyApi.clientCredentialsGrant()
                         console.log('Something went wrong when connecting to Google Play', googlePlayConnectionError)
                     }
                     else {
-                        playMusicApi.addPlayList(newPlaylistName, function(googlePlayPlaylistCreationError) {
+                        playMusicApi.addPlayList(newPlaylistName, function(googlePlayPlaylistCreationError, googlePlayPlaylistCreationData) {
                             if (googlePlayConnectionError){
                                 console.log('Something went wrong when creating a new Google Play playlist', googlePlayPlaylistCreationError)
                             }
                             else {
-                                spotifyPlaylistTracks.forEach(function(song) {
-                                    var searchText = song.track.name + ' ' + song.track.artists[0].name;
-                                    playMusicApi.search(searchText, 25, function(googlePlaySearchError, googlePlaySearchData) {
-                                        if (googlePlaySearchError) {
-                                            console.log('Something went wrong when searching for a song', googlePlaySearchError);
-                                        }
-                                        else {
-                                            var result = googlePlaySearchData.entries
-                                                .filter((item, index) => item.type === '1')
-                                                .sort((first, second) => first.score > second.score)
-                                                .shift();
-                                            console.log(result);
-                                        }
-                                    });
+                                playMusicApi.getPlayLists(function(googlePlayGetPlaylistError, googlePlayGetPlaylistData) {
+                                    if (googlePlayGetPlaylistError) {
+                                        console.log('Something went wrong when fetching Google Play playlists', googlePlayGetPlaylistError);
+                                    }
+                                    else {
+                                        console.log(googlePlayGetPlaylistData.data.items
+                                            .filter((item, index) => item.name === newPlaylistName)
+                                            .shift());
+                                        var googlePlayPlaylistId = googlePlayGetPlaylistData.data.items
+                                            .filter((item, index) => item.name === newPlaylistName)
+                                            .shift().id;
+                                        spotifyPlaylistTracks.forEach(function(song) {
+                                            var searchText = song.track.name + ' ' + song.track.artists[0].name;
+                                            playMusicApi.search(searchText, 25, function(googlePlaySearchError, googlePlaySearchData) {
+                                                if (googlePlaySearchError) {
+                                                    console.log('Something went wrong when searching for a song', googlePlaySearchError);
+                                                }
+                                                else {
+                                                    var googlePlaySong = googlePlaySearchData.entries
+                                                        .filter((item, index) => item.type === '1')
+                                                        .sort((first, second) => first.score > second.score)
+                                                        .shift();
+                                                    playMusicApi.addTrackToPlayList(googlePlaySong.track.nid, googlePlayPlaylistId, function(googlePlayAddTrackError, googlePlayAddTrackData) {
+                                                        if (googlePlayAddTrackError) {
+                                                            console.log('Something went wrong when adding a track to the playlist', googlePlayAddTrackError);
+                                                        }
+                                                        else {
+                                                            console.log(googlePlayAddTrackData);
+                                                        }
+                                                    });
+                                                }
+                                            });
+                                        });
+                                    }
                                 });
                             }
                         });
